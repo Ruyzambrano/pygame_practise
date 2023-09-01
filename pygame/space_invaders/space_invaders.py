@@ -5,18 +5,10 @@ from time import sleep
 
 pygame.init()
 pygame.font.init()
-font = pygame.font.SysFont('freesansbold', 100)
-score_font = pygame.font.SysFont('freesansbold', 50)
+font = pygame.font.SysFont("freesansbold", 100)
+score_font = pygame.font.SysFont("freesansbold", 50)
 
-from pygame.locals import (
-    RLEACCEL,
-    K_LEFT,
-    K_RIGHT,
-    K_SPACE,
-    K_ESCAPE,
-    KEYDOWN,
-    QUIT
-)
+from pygame.locals import RLEACCEL, K_LEFT, K_RIGHT, K_SPACE, K_ESCAPE, KEYDOWN, QUIT
 
 # Define the window size
 screen_width = 800
@@ -24,19 +16,22 @@ screen_height = 600
 
 screen = pygame.display.set_mode((screen_width, screen_height))
 
+
 # Define the player
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super(Player, self).__init__()
-        self.surf = pygame.image.load('pygame\space_invaders\images\player.png').convert()
+        self.surf = pygame.image.load(
+            "pygame\space_invaders\images\player.png"
+        ).convert()
         self.surf.set_colorkey((255, 255, 255), RLEACCEL)
         self.rect = self.surf.get_rect()
-        self.rect.bottom = screen_height-10
-        self.rect.right = screen_width/2
+        self.rect.bottom = screen_height - 10
+        self.rect.right = screen_width / 2
         self.cooldown = 750
         self.last_shot_time = 0
         self.strength = 1
-    
+
     def update(self, pressed_keys):
         if pressed_keys[K_LEFT]:
             self.rect.move_ip(-5, 0)
@@ -44,7 +39,7 @@ class Player(pygame.sprite.Sprite):
             self.rect.move_ip(5, 0)
         if pressed_keys[K_SPACE]:
             self.shoot()
-        
+
         if self.rect.left < 0:
             self.rect.left = 0
         if self.rect.right > screen_width:
@@ -56,10 +51,17 @@ class Player(pygame.sprite.Sprite):
             # Shoot and update last shot time
             height = self.rect.y
             width = self.rect.x
-            new_bullet = Bullet(width, height, -1, "pygame\space_invaders\images\laserBlue04.png", self.strength)
+            new_bullet = Bullet(
+                width,
+                height,
+                -1,
+                "pygame\space_invaders\images\laserBlue04.png",
+                self.strength,
+            )
             player_bullets.add(new_bullet)
             all_sprites.add(new_bullet)
             self.last_shot_time = current_time
+
 
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, width, height, up_down, image_path, strength):
@@ -68,15 +70,16 @@ class Bullet(pygame.sprite.Sprite):
         self.surf.set_colorkey((0, 0, 0), RLEACCEL)
         self.rect = self.surf.get_rect(center=((width + 30), height))
         self.direction = up_down
-        self.surf = pygame.transform.scale(self.surf,
-                                           (int(self.rect.width * 0.5),
-                                            int(self.rect.height * 0.5)))
+        self.surf = pygame.transform.scale(
+            self.surf, (int(self.rect.width * 0.5), int(self.rect.height * 0.5))
+        )
         self.strength = strength
 
     def update(self):
-        self.rect.move_ip(0, 10*self.direction)
+        self.rect.move_ip(0, 10 * self.direction)
         if self.rect.top == 0:
             self.kill()
+
 
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, image_path, enemy_colour):
@@ -88,7 +91,7 @@ class Enemy(pygame.sprite.Sprite):
 
     def update(self, direction, speed):
         self.rect.move_ip(direction * speed, 0)
-        
+
         if self.rect.left < 0 or self.rect.right > screen_width:
             direction *= -1  # Reverse the horizontal direction
             for enemy in enemies:
@@ -99,60 +102,68 @@ class Enemy(pygame.sprite.Sprite):
 
         if self.rect.right > screen_width:
             self.rect.right = screen_width  # Keep the enemy within the right edge
-        
+
         return direction
-    
+
     def shoot(self):
         height = self.rect.y + 5
         width = self.rect.x - 13
-        new_bullet = Bullet(width, height, 1,
-                            r"pygame\space_invaders\images\laserRed04.png",
-                            strength=1)
+        new_bullet = Bullet(
+            width, height, 1, r"pygame\space_invaders\images\laserRed04.png", strength=1
+        )
         enemy_bullets.add(new_bullet)
         all_sprites.add(new_bullet)
 
+
 class RedAlien(Enemy):
     def __init__(self, colour):
-        super().__init__(r'pygame\space_invaders\images\red.png', colour)
+        super().__init__(r"pygame\space_invaders\images\red.png", colour)
         self.health = 1
         self.worth = 1
 
+
 class GreenAlien(Enemy):
     def __init__(self, colour):
-        super().__init__(r'pygame\space_invaders\images\green.png', colour)
+        super().__init__(r"pygame\space_invaders\images\green.png", colour)
         self.health = 4
         self.worth = 2
 
+
 class YellowAlien(Enemy):
     def __init__(self, colour):
-        super().__init__(r'pygame\space_invaders\images\yellow.png', colour)
+        super().__init__(r"pygame\space_invaders\images\yellow.png", colour)
         self.health = 6
         self.worth = 4
 
-class Level():
+
+class Level:
     def __init__(self):
         self.round = 0
         self.speed = 0.8
         self.number_enemies = 8
-        self.enemy_pool = ['red']
+        self.enemy_pool = ["red"]
 
     def next_level(self):
         self.round += 1
         self.speed *= 1.25
         self.number_enemies = math.ceil(self.number_enemies * 1.25)
         if level.round == 2:
-            self.enemy_pool.append('green')
+            self.enemy_pool.append("green")
         if level.round == 3:
-            self.enemy_pool.append('yellow')
+            self.enemy_pool.append("yellow")
+
 
 class Shield(pygame.sprite.Sprite):
     def __init__(self):
         super(Shield, self).__init__()
-        self.surf = pygame.image.load('pygame\space_invaders\images\extra.png').convert()
+        self.surf = pygame.image.load(
+            "pygame\space_invaders\images\extra.png"
+        ).convert()
         self.surf.set_colorkey((255, 255, 255), RLEACCEL)
         self.rect = self.surf.get_rect()
         self.rect.top = 500
         self.health = 5
+
 
 class PowerUp(pygame.sprite.Sprite):
     def __init__(self, power_up_type, image_path, width, height):
@@ -160,9 +171,9 @@ class PowerUp(pygame.sprite.Sprite):
         self.type = power_up_type
         self.surf = pygame.image.load(image_path).convert()
         self.rect = self.surf.get_rect(center=(width, height))
-        self.surf = pygame.transform.scale(self.surf,
-                                           (int(self.rect.width * 0.5),
-                                            int(self.rect.height * 0.5)))
+        self.surf = pygame.transform.scale(
+            self.surf, (int(self.rect.width * 0.5), int(self.rect.height * 0.5))
+        )
 
     def update(self):
         # Implement the behavior of the power-up here
@@ -172,21 +183,57 @@ class PowerUp(pygame.sprite.Sprite):
         if self.rect.top < 0:
             self.kill()
 
+
 class FirePowerUp(PowerUp):
     def __init__(self, width, height):
-        super().__init__('strength_up',
-                         r'pygame\space_invaders\images\powerupRed_star.png',
-                         width, height)
+        super().__init__(
+            "strength_up",
+            r"pygame\space_invaders\images\powerupRed_star.png",
+            width,
+            height,
+        )
+
 
 class FireSpeedUp(PowerUp):
     def __init__(self, width, height):
-        super().__init__('speed_up', r'pygame\space_invaders\images\powerupGreen_bolt.png',
-                         width, height)
+        super().__init__(
+            "speed_up",
+            r"pygame\space_invaders\images\powerupGreen_bolt.png",
+            width,
+            height,
+        )
+
 
 class ExtraShield(PowerUp):
     def __init__(self, width, height):
-        super().__init__('extra_shield', r'pygame\space_invaders\images\powerupBlue_shield.png',
-                          width, height)
+        super().__init__(
+            "extra_shield",
+            r"pygame\space_invaders\images\powerupBlue_shield.png",
+            width,
+            height,
+        )
+
+
+class PlayerShield(pygame.sprite.Sprite):
+    def __init__(self, player):
+        super().__init__()
+        self.surf = pygame.image.load(
+            r"pygame\space_invaders\images\shield3.png"
+        ).convert()
+        self.surf.set_colorkey((255, 255, 255), RLEACCEL)
+        self.surf = pygame.transform.scale(
+            self.surf,
+            (int(self.surf.get_width() * 0.5), int(self.surf.get_height() * 0.5)),
+        )
+        self.rect = self.surf.get_rect()
+        self.rect.centerx = player.rect.centerx
+        self.rect.centery = player.rect.centery
+        self.surf.set_alpha(80)
+
+    def update(self, player):
+        self.rect.centerx = player.rect.centerx
+        self.rect.centery = player.rect.centery
+
 
 # Create the player
 player = Player()
@@ -197,6 +244,7 @@ enemy_bullets = pygame.sprite.Group()
 player_bullets = pygame.sprite.Group()
 shields = pygame.sprite.Group()
 powerups = pygame.sprite.Group()
+player_shields = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
 all_sprites.add(player)
 
@@ -238,6 +286,10 @@ strength_active = False
 strength_cooldown = -60000
 speed_active = False
 speed_cooldown = -60000
+shield_active = False
+
+odds = 5
+
 lose = False
 
 game_over_time = None
@@ -273,6 +325,8 @@ while running:
 
         # Update the player sprite based on user keypresses
         player.update(pressed_keys)
+        for shield in player_shields:
+            shield.update(player)
 
         for bullet in player_bullets:
             bullet.update()
@@ -281,30 +335,35 @@ while running:
             bullet.update()
 
         current_time = pygame.time.get_ticks()
-        
-        if strength_active == True and (current_time - strength_cooldown) > 60000:
-            player.strength -=3
+
+        if strength_active is True and (current_time - strength_cooldown) > 60000:
+            player.strength -= 3
             strength_active = False
 
-        if speed_active == True and (current_time - speed_cooldown) > 60000:
+        if speed_active is True and (current_time - speed_cooldown) > 60000:
             player.cooldown *= 2
             speed_active = False
 
         for powerup in powerups:
             powerup.update()
             if pygame.sprite.collide_rect(powerup, player):
-                if powerup.type == 'strength_up':
+                if powerup.type == "strength_up":
                     if strength_active == False:
                         strength_cooldown = current_time
                         strength_active = True
                         player.strength += 3
-                elif powerup.type == 'speed_up':
+                elif powerup.type == "speed_up":
                     if speed_active == False:
                         speed_cooldown = current_time
                         speed_active = True
                         player.cooldown /= 2
-                elif powerup.type == 'extra_shield':
-                    pass
+                elif powerup.type == "extra_shield":
+                    if shield_active == False:
+                        player_shield = PlayerShield(player)
+                        player_shields.add(player_shield)
+                        all_sprites.add(player_shield)
+                        shield_active = True
+
                 powerup.kill()
 
         for enemy in enemies:
@@ -314,7 +373,14 @@ while running:
 
             for bullet in enemy_bullets:
                 if pygame.sprite.collide_rect(bullet, player):
-                    lose = True
+                    if shield_active == True:
+                        for shield in player_shields:
+                            shield.kill()
+                        shield_active = False
+                    else:
+                        lose = True
+                    bullet.kill()
+
                 for shield in shields:
                     if pygame.sprite.collide_rect(bullet, shield):
                         shield.health -= bullet.strength
@@ -326,27 +392,33 @@ while running:
                 if pygame.sprite.collide_rect(enemy, bullet):
                     enemy.health -= bullet.strength
                     if enemy.health < 1:
-                        if enemy.type == 'red':
+                        rng = random.randint(0, odds)
+                        if enemy.type == "red":
                             red_kills += 1
-                        elif enemy.type == 'green':
+                        elif enemy.type == "green":
                             green_kills += 1
-                        elif enemy.type == 'yellow':
+                        elif enemy.type == "yellow":
                             yellow_kills += 1
-                        if red_kills > 4:
+                        if red_kills > 4 and rng < 5:
                             new_power_up = FireSpeedUp(enemy.rect.x, enemy.rect.y)
                             powerups.add(new_power_up)
                             all_sprites.add(new_power_up)
                             red_kills = 0
-                        if green_kills > 4:
+                            odds = 20
+                        elif green_kills > 4 and rng < 4:
                             new_power_up = FirePowerUp(enemy.rect.x, enemy.rect.y)
                             powerups.add(new_power_up)
                             all_sprites.add(new_power_up)
                             green_kills = 0
-                        if yellow_kills > 4:
+                            odds = 20
+                        elif yellow_kills > 4 and rng < 3:
                             new_power_up = ExtraShield(enemy.rect.x, enemy.rect.y)
                             powerups.add(new_power_up)
                             all_sprites.add(new_power_up)
                             yellow_kills = 0
+                            odds = 10
+                        else:
+                            odds -= 1
                         score += enemy.worth
                         enemy.kill()
                     bullet.kill()
@@ -367,17 +439,17 @@ while running:
             enemies_to_place = level.number_enemies
             height = 50
 
-            for row in range(math.ceil(level.number_enemies/10)):
+            for row in range(math.ceil(level.number_enemies / 10)):
                 while enemies_to_place >= 10:
                     width = 66
                     for num in range(10):
                         enemy_choice = level.enemy_pool.copy()
                         enemy_type = random.choice(enemy_choice)
-                        if enemy_type == 'red':
+                        if enemy_type == "red":
                             new_enemy = RedAlien(enemy_type)
-                        elif enemy_type == 'green':
+                        elif enemy_type == "green":
                             new_enemy = GreenAlien(enemy_type)
-                        elif enemy_type == 'yellow':
+                        elif enemy_type == "yellow":
                             new_enemy = YellowAlien(enemy_type)
                         new_enemy.rect.x = width
                         new_enemy.rect.y = height
@@ -387,17 +459,17 @@ while running:
                     height -= 50
                     enemies_to_place -= 10
                 if enemies_to_place > 0:
-                    divide = (round((screen_width - 150)/enemies_to_place))
+                    divide = round((screen_width - 150) / enemies_to_place)
                     width = divide
                     while enemies_to_place > 0:
                         enemies_to_place -= 1
                         enemy_choice = level.enemy_pool.copy()
                         enemy_type = random.choice(enemy_choice)
-                        if enemy_type == 'red':
+                        if enemy_type == "red":
                             new_enemy = RedAlien(enemy_type)
-                        elif enemy_type == 'green':
+                        elif enemy_type == "green":
                             new_enemy = GreenAlien(enemy_type)
-                        elif enemy_type == 'yellow':
+                        elif enemy_type == "yellow":
                             new_enemy = YellowAlien(enemy_type)
 
                         new_enemy.rect.x = width
@@ -412,22 +484,30 @@ while running:
 
     if lose:
         if game_over_time is None:
-            game_over_time = pygame.time.get_ticks()  # Store the time when game over occurred
+            game_over_time = (
+                pygame.time.get_ticks()
+            )  # Store the time when game over occurred
 
         if pygame.time.get_ticks() - game_over_time < 5000:
-            game_over_text = font.render(f'GAME OVER', True, (220, 20, 60), (0, 0, 0))
-            screen.blit(game_over_text, (screen_width // 2 - game_over_text.get_width() // 2, 200))
+            game_over_text = font.render(f"GAME OVER", True, (220, 20, 60), (0, 0, 0))
+            screen.blit(
+                game_over_text,
+                (screen_width // 2 - game_over_text.get_width() // 2, 200),
+            )
         else:
             running = False
 
-    if (pygame.time.get_ticks() - time_since_start) <  5000:
+    if (pygame.time.get_ticks() - time_since_start) < 5000:
         level_round = level.round
-        level_text = font.render(f'LEVEL {level_round}', True, (255, 255, 255))
+        level_text = font.render(f"LEVEL {level_round}", True, (255, 255, 255))
         screen.blit(level_text, (screen_width // 2 - level_text.get_width() // 2, 200))
 
-    score_text = score_font.render(f'{score}', True, (225, 225, 225), (0, 0, 0))
-    screen.blit(score_text, (screen_width - score_text.get_width() * 2,
-                             score_text.get_height() // 2))
+    score_text = score_font.render(f"{score}", True, (225, 225, 225), (0, 0, 0))
+    screen.blit(
+        score_text,
+        (screen_width - score_text.get_width() * 2, score_text.get_height() // 2),
+    )
+
     # Draw all sprites
     for entity in all_sprites:
         screen.blit(entity.surf, entity.rect)
