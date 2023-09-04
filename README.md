@@ -1,6 +1,6 @@
 # Pygame Space Invaders and Missile Dodge Games
 
-This repository contains two simple games developed using the Pygame library: Space Invaders and Missile Dodge.
+This repository contains  simple games developed using the Pygame library.
 
 ## Instructions
 
