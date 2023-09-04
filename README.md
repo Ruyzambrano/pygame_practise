@@ -2,15 +2,19 @@
 
 This repository contains two simple games developed using the Pygame library: Space Invaders and Missile Dodge.
 
+## Instructions
+
+1. Install Python and Pygame library if not already installed.
+2. Run the `main.py` script to open the menu.
+3. Choose the game you would like to play.
+
 ## Space Invaders
 
 The `space_invaders.py` script implements a classic Space Invaders game. Players control a spaceship at the bottom of the screen, shooting at incoming alien enemies. The goal is to survive as long as possible while shooting down enemies and avoiding their bullets. The game includes multiple levels with increasing difficulty.
 
 ### Instructions
 
-1. Install Python and Pygame library if not already installed.
-2. Run the `space_invaders.py` script to start the game.
-3. Use the arrow keys to move the player's spaceship and the spacebar to shoot.
+Use the arrow keys (left and right) to move the player's spaceship and the spacebar to shoot.
 
 ## Missile Dodge
 
@@ -18,9 +22,7 @@ The `missile_dodge.py` script implements a game where players control a jet, dod
 
 ### Instructions
 
-1. Install Python and Pygame library if not already installed.
-2. Run the `missile_dodge.py` script to start the game.
-3. Use the arrow keys (up, down, left, right) to control the jet and avoid missiles and clouds.
+Use the arrow keys (up, down, left, right) to control the jet and avoid missiles and clouds.
 
 ## Credits
 
