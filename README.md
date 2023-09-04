@@ -19,7 +19,7 @@ Use the arrow keys (left and right) to move the player's spaceship and the space
 
 ## Platform Jump
 
-The 'platformer.py' script implements a classic platform jumper game. Your goal is to jump and navigate your character across the platforms while collecting power-ups and avoiding obstacles.
+The `platformer.py`  script implements a classic platform jumper game. Your goal is to jump and navigate your character across the platforms while collecting power-ups and avoiding obstacles.
 
 ### Instructions
 
