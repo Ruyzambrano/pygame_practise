@@ -1,5 +1,6 @@
 from space_invaders.space_invaders import SpaceInvadersGame
 from missiles.missiles import MissilesGame
+from platformer.platformer import PlatformerGame
 
 import pygame
 from pygame.locals import *
@@ -16,6 +17,7 @@ screen = pygame.display.set_mode((screen_width, screen_height))
 # Define button coordinates and dimensions
 button_play_game1 = pygame.Rect(100, 200, 250, 50)
 button_play_game2 = pygame.Rect(450, 200, 250, 50)
+button_play_game3 = pygame.Rect(100, 300, 250, 50)
 
 # Main menu loop
 running = True
@@ -33,11 +35,15 @@ while running:
                 
             elif button_play_game2.collidepoint(mouse_pos):
                 MissilesGame.run_game()
+            
+            elif button_play_game3.collidepoint(mouse_pos):
+                PlatformerGame.run_game()
 
     # Draw the main menu
     screen.fill((204, 204, 255))
     pygame.draw.rect(screen, (0, 128, 255), button_play_game1)
     pygame.draw.rect(screen, (0, 128, 255), button_play_game2)
+    pygame.draw.rect(screen, (0, 128, 255), button_play_game3)
 
     # Add button labels
     title_text = large_font.render("RETRO ARCADE GAME", True, (102, 0, 102))
@@ -51,7 +57,10 @@ while running:
     screen.blit(play_missiles,
                 (button_play_game2.x + (button_play_game2.width // 2 - play_missiles.get_width() // 2),
                  button_play_game2.y + (button_play_game2.height // 2 - play_missiles.get_height() // 2)))
-
+    play_platformer = small_font.render("Play Platform Jump", True, (102, 0, 102))
+    screen.blit(play_platformer,
+                (button_play_game3.x + (button_play_game3.width // 2 - play_platformer.get_width() // 2),
+                 button_play_game3.y + (button_play_game3.height // 2 - play_platformer.get_height() // 2)))
     pygame.display.flip()
 
 pygame.quit()

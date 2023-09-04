@@ -1,10 +1,11 @@
+import pygame
+import random
+import math
+import json
+import os
+
 class SpaceInvadersGame:
     def run_game():
-        import pygame
-        import random
-        import math
-        import json
-        import os
 
         pygame.init()
         pygame.font.init()
@@ -617,3 +618,7 @@ class SpaceInvadersGame:
             pygame.display.flip()
 
             clock.tick(40)
+
+if __name__ == '__main__':
+    SpaceInvadersGame.run_game()
+    pygame.quit()

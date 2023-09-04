@@ -11,12 +11,19 @@ This repository contains two simple games developed using the Pygame library: Sp
 
 ## Space Invaders
 
-The `space_invaders.py` script implements a classic Space Invaders game. Players control a spaceship at the bottom of the screen, shooting at incoming alien enemies. The goal is to survive as long as possible while shooting down enemies and avoiding their bullets. The game includes multiple levels with increasing difficulty.
+The `space_invaders.py` script implements a retro Space Invaders game. Players control a spaceship at the bottom of the screen, shooting at incoming alien enemies. The goal is to survive as long as possible while shooting down enemies and avoiding their bullets. The game includes multiple levels with increasing difficulty.
 
 ### Instructions
 
 Use the arrow keys (left and right) to move the player's spaceship and the spacebar to shoot.
 
+## Platform Jump
+
+The 'platformer.py' script implements a classic platform jumper game. Your goal is to jump and navigate your character across the platforms while collecting power-ups and avoiding obstacles.
+
+### Instructions
+
+Use the arrow keys (left and right) to move the player and use the spacebar to jump.
 ## Missile Dodge
 
 The `missile_dodge.py` script implements a game where players control a jet, dodging missiles and clouds while flying across the screen. The game is an endless runner where the player's goal is to achieve a high score by avoiding obstacles for as long as possible.
