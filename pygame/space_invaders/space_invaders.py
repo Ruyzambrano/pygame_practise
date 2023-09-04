@@ -1,7 +1,8 @@
 import pygame
 import random
 import math
-from time import sleep
+import json
+import os
 
 pygame.init()
 pygame.font.init()
@@ -15,6 +16,90 @@ screen_width = 800
 screen_height = 600
 
 screen = pygame.display.set_mode((screen_width, screen_height))
+
+def display_high_scores(high_scores):
+    text = ""
+    for i, (name, score) in enumerate(high_scores):
+        text += f"{i + 1}. {name}: \t\t{score}\n"
+    text += "\nPress ESC to exit."
+    text = font.render(text, True, (255, 255, 255))
+    return text
+
+
+def save_high_scores(high_scores):
+    with open(r"pygame\space_invaders\space_invaders.json", "w") as file:
+        json.dump(high_scores, file)
+
+def load_high_scores():
+    file_path = r"pygame\space_invaders\space_invaders.json"
+    if os.path.isfile(file_path):
+        try:
+            with open(file_path, "r") as file:
+                return json.load(file)
+        except json.JSONDecodeError:
+            # Handle JSON decoding errors (e.g., invalid JSON data in the file)
+            return []
+    else:
+        # Handle the case where the file doesn't exist
+        return []
+
+def update_high_scores(high_scores, player_score):
+    if len(high_scores) < 10 or player_score > high_scores[-1][1]:
+        player_name = get_player_name()
+        high_scores.append((player_name, player_score))
+        high_scores.sort(key=lambda x: x[1], reverse=True)  # Sort by score in descending order
+        high_scores = high_scores[:10]  # Keep only the top 10 scores
+        save_high_scores(high_scores)  # Save the updated high scores to a file
+    return high_scores
+
+def get_player_name():
+    input_box = pygame.Rect(
+        screen_width // 2 - 100, screen_height // 2 - 25, 200, 50
+    )
+    color_inactive = pygame.Color("lightskyblue3")
+    color_active = pygame.Color("dodgerblue2")
+    color = color_inactive
+    active = False
+    text = ""
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if input_box.collidepoint(event.pos):
+                    active = not active
+                else:
+                    active = False
+                color = color_active if active else color_inactive
+            if event.type == pygame.KEYDOWN:
+                if active:
+                    if event.key == pygame.K_RETURN:
+                        return text
+                    elif event.key == pygame.K_BACKSPACE:
+                        text = text[:-1]
+                    else:
+                        text += event.unicode
+
+        screen.fill((30, 30, 30))
+        high_score_text = font.render(f"HIGH SCORE!", True, (255, 255, 255))
+        txt_surface = score_font.render(text, True, color)
+        enter_name_text = score_font.render(f"Enter your name:", True, (255, 255, 255))
+        width = max(200, txt_surface.get_width() + 10)
+        input_box.w = width
+        screen.blit(
+                high_score_text,
+                (screen_width // 2 - high_score_text.get_width() // 2, 160),
+            )
+        screen.blit(
+                enter_name_text,
+                (screen_width // 2 - enter_name_text.get_width() // 2, 240),
+            )
+        screen.blit(txt_surface, (input_box.x + 5, input_box.y + 5))
+        pygame.draw.rect(screen, color, input_box, 2)
+        pygame.display.flip()
+        clock.tick(30)
 
 
 # Define the player
@@ -287,6 +372,7 @@ strength_cooldown = -60000
 speed_active = False
 speed_cooldown = -60000
 shield_active = False
+got_high_scores = False
 
 odds = 5
 
@@ -482,20 +568,33 @@ while running:
 
     screen.fill((0, 0, 0))  # Clear the screen
 
-    if lose:
+    if lose and not got_high_scores:
         if game_over_time is None:
-            game_over_time = (
-                pygame.time.get_ticks()
-            )  # Store the time when game over occurred
+            game_over_time = pygame.time.get_ticks()
 
         if pygame.time.get_ticks() - game_over_time < 5000:
             game_over_text = font.render(f"GAME OVER", True, (220, 20, 60), (0, 0, 0))
             screen.blit(
                 game_over_text,
-                (screen_width // 2 - game_over_text.get_width() // 2, 200),
+                (screen_width // 2 - game_over_text.get_width() // 2, 150),
             )
         else:
-            running = False
+            high_scores = load_high_scores()
+            high_scores = update_high_scores(high_scores, score)
+            high_score_text = display_high_scores(high_scores)
+            got_high_scores = True
+    
+    if lose and got_high_scores:
+        y = 150
+        for i, (name, score) in enumerate(high_scores):
+            text = f"{i + 1}. {name}: {score}"
+            text = score_font.render(text, True, (255, 255, 255))
+            screen.blit(text, (screen_width // 2 - 100, y))
+            y += text.get_height()
+        y += text.get_height()
+        text = "Press ESC to exit."
+        text = score_font.render(text, True, (255, 255, 255))
+        screen.blit(text, (screen_width // 2 - text.get_width() // 2, y))
 
     if (pygame.time.get_ticks() - time_since_start) < 5000:
         level_round = level.round
