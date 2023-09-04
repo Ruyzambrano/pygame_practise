@@ -7,6 +7,7 @@ This repository contains two simple games developed using the Pygame library: Sp
 1. Install Python and Pygame library if not already installed.
 2. Run the `main.py` script to open the menu.
 3. Choose the game you would like to play.
+4. When the game is finished, you will be returned to the main menu.
 
 ## Space Invaders
 
