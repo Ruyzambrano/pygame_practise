@@ -1,4 +1,4 @@
-# Pygame Space Invaders and Missile Dodge Games
+# Pygame Classic Arcade Games App
 
 This repository contains  simple games developed using the Pygame library.
 
