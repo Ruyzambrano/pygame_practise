@@ -1,6 +1,7 @@
 from space_invaders.space_invaders import SpaceInvadersGame
 from missiles.missiles import MissilesGame
 from platformer.platformer import PlatformerGame
+from flappy_bird.flappy_bird import FlappyBirdGame
 
 import pygame
 from pygame.locals import *
@@ -18,6 +19,7 @@ screen = pygame.display.set_mode((screen_width, screen_height))
 button_play_game1 = pygame.Rect(100, 200, 250, 50)
 button_play_game2 = pygame.Rect(450, 200, 250, 50)
 button_play_game3 = pygame.Rect(100, 300, 250, 50)
+button_play_game4 = pygame.Rect(450, 300, 250, 50)
 quit_button = pygame.Rect(275, 400, 250, 50)
 
 # Main menu loop
@@ -40,6 +42,9 @@ while running:
             elif button_play_game3.collidepoint(mouse_pos):
                 PlatformerGame.run_game()
             
+            elif button_play_game4.collidepoint(mouse_pos):
+                FlappyBirdGame.run_game()
+            
             elif quit_button.collidepoint(mouse_pos):
                 running = False
 
@@ -48,6 +53,7 @@ while running:
     pygame.draw.rect(screen, (0, 128, 255), button_play_game1)
     pygame.draw.rect(screen, (0, 128, 255), button_play_game2)
     pygame.draw.rect(screen, (0, 128, 255), button_play_game3)
+    pygame.draw.rect(screen, (0, 128, 255), button_play_game4)
     pygame.draw.rect(screen, (0, 128, 255), quit_button)
 
     # Add button labels
@@ -66,6 +72,10 @@ while running:
     screen.blit(play_platformer,
                 (button_play_game3.x + (button_play_game3.width // 2 - play_platformer.get_width() // 2),
                  button_play_game3.y + (button_play_game3.height // 2 - play_platformer.get_height() // 2)))
+    play_flappy_bird = small_font.render("Play Flappy Fish", True, (102, 0, 102))
+    screen.blit(play_flappy_bird,
+                (button_play_game4.x + (button_play_game4.width // 2 - play_flappy_bird.get_width() // 2),
+                 button_play_game4.y + (button_play_game4.height // 2 - play_flappy_bird.get_height() // 2)))
     quit_app = small_font.render("Quit", True, (102, 0, 102))
     screen.blit(quit_app,
                 (quit_button.x + (quit_button.width // 2 - quit_app.get_width() // 2),
