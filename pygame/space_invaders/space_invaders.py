@@ -119,6 +119,7 @@ class SpaceInvadersGame:
                 self.cooldown = 750
                 self.last_shot_time = 0
                 self.strength = 1
+                self.mask = pygame.mask.from_surface(self.surf)
 
             def update(self, pressed_keys):
                 if pressed_keys[K_LEFT]:
@@ -162,6 +163,7 @@ class SpaceInvadersGame:
                     self.surf, (int(self.rect.width * 0.5), int(self.rect.height * 0.5))
                 )
                 self.strength = strength
+                self.mask = pygame.mask.from_surface(self.surf)
 
             def update(self):
                 self.rect.move_ip(0, 10 * self.direction)
@@ -176,6 +178,7 @@ class SpaceInvadersGame:
                 self.surf.set_colorkey((255, 255, 255), RLEACCEL)
                 self.rect = self.surf.get_rect()
                 self.type = enemy_colour
+                self.mask = pygame.mask.from_surface(self.surf)
 
             def update(self, direction, speed):
                 self.rect.move_ip(direction * speed, 0)
@@ -251,7 +254,7 @@ class SpaceInvadersGame:
                 self.rect = self.surf.get_rect()
                 self.rect.top = 500
                 self.health = 5
-
+                self.mask = pygame.mask.from_surface(self.surf)
 
         class PowerUp(pygame.sprite.Sprite):
             def __init__(self, power_up_type, image_path, width, height):
@@ -281,7 +284,6 @@ class SpaceInvadersGame:
                     height,
                 )
 
-
         class FireSpeedUp(PowerUp):
             def __init__(self, width, height):
                 super().__init__(
@@ -291,7 +293,6 @@ class SpaceInvadersGame:
                     height,
                 )
 
-
         class ExtraShield(PowerUp):
             def __init__(self, width, height):
                 super().__init__(
@@ -300,7 +301,6 @@ class SpaceInvadersGame:
                     width,
                     height,
                 )
-
 
         class PlayerShield(pygame.sprite.Sprite):
             def __init__(self, player):
@@ -317,6 +317,7 @@ class SpaceInvadersGame:
                 self.rect.centerx = player.rect.centerx
                 self.rect.centery = player.rect.centery
                 self.surf.set_alpha(80)
+                self.mask = pygame.mask.from_surface(self.surf)
 
             def update(self, player):
                 self.rect.centerx = player.rect.centerx
@@ -457,11 +458,11 @@ class SpaceInvadersGame:
 
                 for enemy in enemies:
                     direction = enemy.update(direction, level.speed)
-                    if pygame.sprite.collide_rect(enemy, player):
+                    if pygame.sprite.collide_mask(enemy, player):
                         lose = True
 
                     for bullet in enemy_bullets:
-                        if pygame.sprite.collide_rect(bullet, player):
+                        if pygame.sprite.collide_mask(bullet, player):
                             if shield_active == True:
                                 for shield in player_shields:
                                     shield.kill()
@@ -471,14 +472,14 @@ class SpaceInvadersGame:
                             bullet.kill()
 
                         for shield in shields:
-                            if pygame.sprite.collide_rect(bullet, shield):
+                            if pygame.sprite.collide_mask(bullet, shield):
                                 shield.health -= bullet.strength
                                 bullet.kill()
                                 if shield.health < 1:
                                     shield.kill()
 
                     for bullet in player_bullets:
-                        if pygame.sprite.collide_rect(enemy, bullet):
+                        if pygame.sprite.collide_mask(enemy, bullet):
                             enemy.health -= bullet.strength
                             if enemy.health < 1:
                                 rng = random.randint(0, odds)
@@ -512,7 +513,7 @@ class SpaceInvadersGame:
                                 enemy.kill()
                             bullet.kill()
                         for shield in shields:
-                            if pygame.sprite.collide_rect(bullet, shield):
+                            if pygame.sprite.collide_mask(bullet, shield):
                                 shield.health -= 1
                                 bullet.kill()
                                 if shield.health == 0:

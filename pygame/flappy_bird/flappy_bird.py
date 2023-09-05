@@ -122,6 +122,7 @@ class FlappyBirdGame:
                 self.jump_timer = 0  # Timer to control jump delay
                 self.jump = False
                 self.go = False
+                self.mask = pygame.mask.from_surface(self.surf)
 
             def update(self):
                 keys = pygame.key.get_pressed()
@@ -134,7 +135,7 @@ class FlappyBirdGame:
 
                 # Make the jump smoother by gradually reducing upward velocity
                 if self.velocity.y < 0:
-                    self.velocity.y += .7  # Adjust this value for jump speed
+                    self.velocity.y += 0.5  # Adjust this value for jump speed
 
                 if self.velocity.y >= 0 and self.jump == True:
                     self.velocity += self.gravity
@@ -161,6 +162,7 @@ class FlappyBirdGame:
                 self.surf = pygame.transform.scale(self.surf, (60, 300))
                 self.rect = self.surf.get_rect()
                 self.checked = False
+                self.mask = pygame.mask.from_surface(self.surf)
 
 
             def update(self, speed):
@@ -187,7 +189,7 @@ class FlappyBirdGame:
         pipes = pygame.sprite.Group()
 
         background = pygame.image.load(r"pygame\flappy_bird\images\blue_grass.png").convert()
-        GRAVITY = 7
+        GRAVITY = 4
         clock = pygame.time.Clock()
         running = True
         lose = False
@@ -294,9 +296,11 @@ class FlappyBirdGame:
                             pipe.checked = True
                             if not lose:
                                 score += 1
-                    if pygame.sprite.collide_rect(player, pipe):
+                    if pygame.sprite.collide_mask(player, pipe):
                         lose = True
                         player.velocity = pygame.math.Vector2(level.speed, 0)
+                        player.jump_force = 0
+                        player.gravity = pygame.math.Vector2(0, 0)
             
             score_text = small_font.render(f"{score}", True, (0, 0, 0), (208,244,247))
             screen.blit(

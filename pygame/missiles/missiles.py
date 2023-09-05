@@ -113,15 +113,14 @@ class MissilesGame:
                 self.surf.set_colorkey((255, 255, 255), RLEACCEL)
                 self.rect = self.surf.get_rect()
                 self.rect.y = screen_height // 2 
+                self.mask = pygame.mask.from_surface(self.surf)
 
             # Move the sprite based on user keypresses
             def update(self, pressed_keys):
                 if pressed_keys[K_UP]:
                     self.rect.move_ip(0, -5)
-                    move_up_sound.play()
                 if pressed_keys[K_DOWN]:
                     self.rect.move_ip(0, 5)
-                    move_down_sound.play()
                 if pressed_keys[K_LEFT]:
                     self.rect.move_ip(-5, 0)
                 if pressed_keys[K_RIGHT]:
@@ -151,6 +150,7 @@ class MissilesGame:
                     )
                 )
                 self.speed = random.randint(5, 20)
+                self.mask = pygame.mask.from_surface(self.surf)
 
             # Move the sprite based on speed
             # Remove the sprite when it passes the left edge of the screen
@@ -211,18 +211,6 @@ class MissilesGame:
         clouds = pygame.sprite.Group()
         all_sprites = pygame.sprite.Group()
         all_sprites.add(player)
-
-        # Load and play background music
-        # Sound source: http://ccmixter.org/files/Apoxode/59262
-        # License: https://creativecommons.org/licenses/by/3.0/
-        pygame.mixer.music.load("pygame\missiles\sound\Apoxode_-_Electric_1.mp3")
-        pygame.mixer.music.play(loops=-1)
-
-        # Load all sound files
-        # Sound sources: Jon Fincher
-        move_up_sound = pygame.mixer.Sound("pygame\missiles\sound\Rising_putter.ogg")
-        move_down_sound = pygame.mixer.Sound("pygame\missiles\sound\Falling_putter.ogg")
-        collision_sound = pygame.mixer.Sound("pygame\missiles\sound\Collision.ogg")
 
         # Variable to keep the main loop running
         running = True
@@ -312,16 +300,10 @@ class MissilesGame:
                 screen.blit(entity.surf, entity.rect)
 
             # Check if any enemies have collided with the player
-            if pygame.sprite.spritecollideany(player, enemies):
-                # Stop any moving sounds and play the collision sound
-                move_up_sound.stop()
-                move_down_sound.stop()
-                collision_sound.play()
-
-                # If so, then remove the player and stop the loop
-                player.kill()
-
-                lose = True
+            for enemy in enemies:
+                if pygame.sprite.collide_mask(player, enemy):
+                    player.kill()
+                    lose = True
 
             # Update the display
             pygame.display.flip()
