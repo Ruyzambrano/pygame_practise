@@ -18,6 +18,7 @@ screen = pygame.display.set_mode((screen_width, screen_height))
 button_play_game1 = pygame.Rect(100, 200, 250, 50)
 button_play_game2 = pygame.Rect(450, 200, 250, 50)
 button_play_game3 = pygame.Rect(100, 300, 250, 50)
+quit_button = pygame.Rect(275, 400, 250, 50)
 
 # Main menu loop
 running = True
@@ -38,12 +39,16 @@ while running:
             
             elif button_play_game3.collidepoint(mouse_pos):
                 PlatformerGame.run_game()
+            
+            elif quit_button.collidepoint(mouse_pos):
+                running = False
 
     # Draw the main menu
     screen.fill((204, 204, 255))
     pygame.draw.rect(screen, (0, 128, 255), button_play_game1)
     pygame.draw.rect(screen, (0, 128, 255), button_play_game2)
     pygame.draw.rect(screen, (0, 128, 255), button_play_game3)
+    pygame.draw.rect(screen, (0, 128, 255), quit_button)
 
     # Add button labels
     title_text = large_font.render("RETRO ARCADE GAME", True, (102, 0, 102))
@@ -61,6 +66,10 @@ while running:
     screen.blit(play_platformer,
                 (button_play_game3.x + (button_play_game3.width // 2 - play_platformer.get_width() // 2),
                  button_play_game3.y + (button_play_game3.height // 2 - play_platformer.get_height() // 2)))
+    quit_app = small_font.render("Quit", True, (102, 0, 102))
+    screen.blit(quit_app,
+                (quit_button.x + (quit_button.width // 2 - quit_app.get_width() // 2),
+                 quit_button.y + (quit_button.height // 2 - quit_app.get_height() // 2)))
     pygame.display.flip()
 
 pygame.quit()

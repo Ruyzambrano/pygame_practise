@@ -33,11 +33,11 @@ class PlatformerGame:
 
 
         def save_high_scores(high_scores):
-            with open(r"pygame\space_invaders\space_invaders.json", "w") as file:
+            with open(r"pygame\platformer\platformer.json", "w") as file:
                 json.dump(high_scores, file)
 
         def load_high_scores():
-            file_path = r"pygame\space_invaders\space_invaders.json"
+            file_path = r"pygame\platformer\platformer.json"
             if os.path.isfile(file_path):
                 try:
                     with open(file_path, "r") as file:
