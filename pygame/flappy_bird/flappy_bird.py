@@ -4,10 +4,18 @@ import math
 import json
 import os
 
+
 class FlappyBirdGame:
     def run_game():
-
-        from pygame.locals import RLEACCEL, K_LEFT, K_RIGHT, K_SPACE, K_ESCAPE, KEYDOWN, QUIT
+        from pygame.locals import (
+            RLEACCEL,
+            K_LEFT,
+            K_RIGHT,
+            K_SPACE,
+            K_ESCAPE,
+            KEYDOWN,
+            QUIT,
+        )
 
         # Initialize Pygame and create a screen
         pygame.init()
@@ -31,7 +39,6 @@ class FlappyBirdGame:
             text = large_font.render(text, True, (255, 255, 255))
             return text
 
-
         def save_high_scores(high_scores):
             with open(r"pygame\flappy_bird\flappy_bird.json", "w") as file:
                 json.dump(high_scores, file)
@@ -53,7 +60,9 @@ class FlappyBirdGame:
             if len(high_scores) < 10 or player_score > high_scores[-1][1]:
                 player_name = get_player_name()
                 high_scores.append((player_name, player_score))
-                high_scores.sort(key=lambda x: x[1], reverse=True)  # Sort by score in descending order
+                high_scores.sort(
+                    key=lambda x: x[1], reverse=True
+                )  # Sort by score in descending order
                 high_scores = high_scores[:10]  # Keep only the top 10 scores
                 save_high_scores(high_scores)  # Save the updated high scores to a file
             return high_scores
@@ -89,29 +98,34 @@ class FlappyBirdGame:
                                 text += event.unicode
 
                 screen.fill((30, 30, 30))
-                high_score_text = large_font.render(f"HIGH SCORE!", True, (255, 255, 255))
+                high_score_text = large_font.render(
+                    f"HIGH SCORE!", True, (255, 255, 255)
+                )
                 txt_surface = small_font.render(text, True, color)
-                enter_name_text = small_font.render(f"Enter your name:", True, (255, 255, 255))
+                enter_name_text = small_font.render(
+                    f"Enter your name:", True, (255, 255, 255)
+                )
                 width = max(200, txt_surface.get_width() + 10)
                 input_box.w = width
                 screen.blit(
-                        high_score_text,
-                        (screen_width // 2 - high_score_text.get_width() // 2, 160),
-                    )
+                    high_score_text,
+                    (screen_width // 2 - high_score_text.get_width() // 2, 160),
+                )
                 screen.blit(
-                        enter_name_text,
-                        (screen_width // 2 - enter_name_text.get_width() // 2, 240),
-                    )
+                    enter_name_text,
+                    (screen_width // 2 - enter_name_text.get_width() // 2, 240),
+                )
                 screen.blit(txt_surface, (input_box.x + 5, input_box.y + 5))
                 pygame.draw.rect(screen, color, input_box, 2)
                 pygame.display.flip()
                 clock.tick(30)
 
-
         class Player(pygame.sprite.Sprite):
             def __init__(self, GRAVITY):
                 super().__init__()
-                self.surf = pygame.image.load(r"pygame\flappy_bird\images\fishTile_100.png").convert()
+                self.surf = pygame.image.load(
+                    r"pygame\flappy_bird\images\fishTile_100.png"
+                ).convert()
                 self.surf.set_colorkey((0, 0, 0))
                 self.rect = self.surf.get_rect()
                 self.rect.center = (self.rect.width, screen_height // 2)
@@ -144,51 +158,53 @@ class FlappyBirdGame:
                 # Update player's position based on velocity
                 self.rect.move_ip(self.velocity)
 
-                if self.rect.y <  -30:
-                    player.rect.y = -30  
-                
+                if self.rect.y < -30:
+                    player.rect.y = -30
+
                 if self.rect.y > screen_height:
                     self.rect.y = screen_height
 
         class Pipe(pygame.sprite.Sprite):
             def __init__(self):
                 super().__init__()
-                self.surf = pygame.image.load(r"pygame\flappy_bird\images\block_narrow.png").convert()
+                self.surf = pygame.image.load(
+                    r"pygame\flappy_bird\images\block_narrow.png"
+                ).convert()
                 self.surf.set_colorkey((0, 0, 0), RLEACCEL)
                 # self.surf = pygame.image.load(random.choice((r"pygame\flappy_bird\images\hill_large.png",
-                                                            #  r"pygame\flappy_bird\images\hill_largeAlt.png",
-                                                            #  r"pygame\flappy_bird\images\hill_small.png",
-                                                            #  r"pygame\flappy_bird\images\hill_smallAlt.png")))
+                #  r"pygame\flappy_bird\images\hill_largeAlt.png",
+                #  r"pygame\flappy_bird\images\hill_small.png",
+                #  r"pygame\flappy_bird\images\hill_smallAlt.png")))
                 self.surf = pygame.transform.scale(self.surf, (60, 300))
                 self.rect = self.surf.get_rect()
                 self.checked = False
                 self.mask = pygame.mask.from_surface(self.surf)
 
-
             def update(self, speed):
                 self.rect.move_ip(speed, 0)
-            
+
         class TopPipe(Pipe):
             def __init__(self, height):
                 super().__init__()
                 self.surf = pygame.transform.flip(self.surf, 0, 1)
                 self.rect.y = height
-        
+
         class BottomPipe(Pipe):
             def __init__(self, height):
                 super().__init__()
                 self.rect.y = height
 
-        class Level():
+        class Level:
             def __init__(self):
                 self.round = 1
                 self.speed = -2
 
-        
         all_sprites = pygame.sprite.Group()
         pipes = pygame.sprite.Group()
 
-        background = pygame.image.load(r"pygame\flappy_bird\images\blue_grass.png").convert()
+        background = pygame.image.load(
+            r"pygame\flappy_bird\images\blue_grass.png"
+        ).convert()
         GRAVITY = 4
         clock = pygame.time.Clock()
         running = True
@@ -244,7 +260,7 @@ class FlappyBirdGame:
                 if event.type == KEYDOWN:
                     if event.key == K_ESCAPE:
                         running = False
-            
+
             # Clear the screen
             screen.blit(background, (0, -180))
 
@@ -252,36 +268,46 @@ class FlappyBirdGame:
                 if game_over_time == None:
                     game_over_time = pygame.time.get_ticks()
 
-                if pygame.time.get_ticks() - game_over_time < 5000:  # Display game over message for 5 seconds
-                    game_over_text = large_font.render("GAME OVER", True, (220, 20, 60), (0, 0, 0))
+                if (
+                    pygame.time.get_ticks() - game_over_time < 5000
+                ):  # Display game over message for 5 seconds
+                    game_over_text = large_font.render(
+                        "GAME OVER", True, (220, 20, 60), (0, 0, 0)
+                    )
                     screen.blit(
                         game_over_text,
-                        (screen_width // 2 - game_over_text.get_width() // 2, screen_height // 2 - game_over_text.get_height() // 2)
+                        (
+                            screen_width // 2 - game_over_text.get_width() // 2,
+                            screen_height // 2 - game_over_text.get_height() // 2,
+                        ),
                     )
                 else:
                     high_scores = load_high_scores()
                     high_scores = update_high_scores(high_scores, score)
                     high_score_text = display_high_scores(high_scores)
                     got_high_scores = True
-            
+
             if lose and got_high_scores:
                 y = 150
                 for i, (name, score) in enumerate(high_scores):
                     text = f"{i + 1}. {name}: {score}"
-                    text = small_font.render(text, True, (0, 0, 0), (208,244,247))
+                    text = small_font.render(text, True, (0, 0, 0), (208, 244, 247))
                     screen.blit(text, (screen_width // 2 - 100, y))
                     y += text.get_height()
                 y += text.get_height()
                 text = "Press ESC to exit."
-                text = small_font.render(text, True, (0, 0, 0), (208,244,247))
+                text = small_font.render(text, True, (0, 0, 0), (208, 244, 247))
                 screen.blit(text, (screen_width // 2 - text.get_width() // 2, y))
 
             player.update()
-            
+
             if player.go:
                 for pipe in pipes:
                     pipe.update(level.speed)
-                    if pipe.rect.x < player.rect.x and pipe.__class__.__name__ == "BottomPipe":
+                    if (
+                        pipe.rect.x < player.rect.x
+                        and pipe.__class__.__name__ == "BottomPipe"
+                    ):
                         if pipe.checked == False:
                             height = random.randint(-200, 0)
                             new_pipe = TopPipe(height)
@@ -301,22 +327,26 @@ class FlappyBirdGame:
                         player.velocity = pygame.math.Vector2(level.speed, 0)
                         player.jump_force = 0
                         player.gravity = pygame.math.Vector2(0, 0)
-            
-            score_text = small_font.render(f"{score}", True, (0, 0, 0), (208,244,247))
+
+            score_text = small_font.render(f"{score}", True, (0, 0, 0), (208, 244, 247))
             screen.blit(
                 score_text,
-                (screen_width - score_text.get_width() * 2, score_text.get_height() // 2),
+                (
+                    screen_width - score_text.get_width() * 2,
+                    score_text.get_height() // 2,
+                ),
             )
 
             # Draw all sprites
             for sprite in all_sprites:
                 screen.blit(sprite.surf, sprite.rect)
-            
+
             level.speed *= 1.0001
 
             pygame.display.flip()
 
             clock.tick(60)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     FlappyBirdGame.run_game()

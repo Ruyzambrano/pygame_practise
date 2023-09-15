@@ -1,6 +1,6 @@
 # Pygame Classic Arcade Games App
 
-This repository contains  simple games developed using the Pygame library.
+This repository contains simple games developed using the Pygame library.
 
 ## Instructions
 
@@ -19,11 +19,12 @@ Use the arrow keys (left and right) to move the player's spaceship and the space
 
 ## Platform Jump
 
-The `platformer.py`  script implements a classic platform jumper game. Your goal is to jump and navigate your character across the platforms while collecting power-ups and avoiding obstacles.
+The `platformer.py` script implements a classic platform jumper game. Your goal is to jump and navigate your character across the platforms while collecting power-ups and avoiding obstacles.
 
 ### Instructions
 
 Use the arrow keys (left and right) to move the player and use the spacebar to jump.
+
 ## Missile Dodge
 
 The `missile_dodge.py` script implements a game where players control a jet, dodging missiles and clouds while flying across the screen. The game is an endless runner where the player's goal is to achieve a high score by avoiding obstacles for as long as possible.
@@ -31,6 +32,14 @@ The `missile_dodge.py` script implements a game where players control a jet, dod
 ### Instructions
 
 Use the arrow keys (up, down, left, right) to control the jet and avoid missiles and clouds.
+
+## Flappy Fish
+
+The `flappy_fish.py` script models a game similar to Flappy Bird, where a fish must navigate through obstacles by flapping its fins. The objective is to achieve the highest score possible by avoiding collisions with the obstacles.
+
+### Instructions
+
+Press the spacebar to make the fish flap and navigate through the obstacles.
 
 ## Credits
 

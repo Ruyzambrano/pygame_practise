@@ -2,6 +2,8 @@ import pygame
 import random
 import os
 import json
+
+
 class MissilesGame:
     def run_game():
         # Import pygame.locals for easier access to key coordinates
@@ -13,7 +15,7 @@ class MissilesGame:
             K_RIGHT,
             K_ESCAPE,
             KEYDOWN,
-            QUIT
+            QUIT,
         )
 
         # Define constants for the screen width and height
@@ -49,7 +51,9 @@ class MissilesGame:
             if len(high_scores) < 10 or player_score > high_scores[-1][1]:
                 player_name = get_player_name()
                 high_scores.append((player_name, player_score))
-                high_scores.sort(key=lambda x: x[1], reverse=True)  # Sort by score in descending order
+                high_scores.sort(
+                    key=lambda x: x[1], reverse=True
+                )  # Sort by score in descending order
                 high_scores = high_scores[:10]  # Keep only the top 10 scores
                 save_high_scores(high_scores)  # Save the updated high scores to a file
             return high_scores
@@ -87,32 +91,35 @@ class MissilesGame:
                 screen.fill((30, 30, 30))
                 high_score_text = font.render(f"HIGH SCORE!", True, (255, 255, 255))
                 txt_surface = score_font.render(text, True, color)
-                enter_name_text = score_font.render(f"Enter your name:", True, (255, 255, 255))
+                enter_name_text = score_font.render(
+                    f"Enter your name:", True, (255, 255, 255)
+                )
                 width = max(200, txt_surface.get_width() + 10)
                 input_box.w = width
                 screen.blit(
-                        high_score_text,
-                        (screen_width // 2 - high_score_text.get_width() // 2, 160),
-                    )
+                    high_score_text,
+                    (screen_width // 2 - high_score_text.get_width() // 2, 160),
+                )
                 screen.blit(
-                        enter_name_text,
-                        (screen_width // 2 - enter_name_text.get_width() // 2, 240),
-                    )
+                    enter_name_text,
+                    (screen_width // 2 - enter_name_text.get_width() // 2, 240),
+                )
                 screen.blit(txt_surface, (input_box.x + 5, input_box.y + 5))
                 pygame.draw.rect(screen, color, input_box, 2)
                 pygame.display.flip()
                 clock.tick(30)
-
 
         # Define a player object by extending pygame.sprite.Sprite
         # The surface drawn on the screen is now an attribute of 'player'
         class Player(pygame.sprite.Sprite):
             def __init__(self):
                 super(Player, self).__init__()
-                self.surf = pygame.image.load("pygame\missiles\images\jet.png").convert()
+                self.surf = pygame.image.load(
+                    "pygame\missiles\images\jet.png"
+                ).convert()
                 self.surf.set_colorkey((255, 255, 255), RLEACCEL)
                 self.rect = self.surf.get_rect()
-                self.rect.y = screen_height // 2 
+                self.rect.y = screen_height // 2
                 self.mask = pygame.mask.from_surface(self.surf)
 
             # Move the sprite based on user keypresses
@@ -141,7 +148,9 @@ class MissilesGame:
         class Enemy(pygame.sprite.Sprite):
             def __init__(self):
                 super(Enemy, self).__init__()
-                self.surf = pygame.image.load("pygame\missiles\images\missile.png").convert()
+                self.surf = pygame.image.load(
+                    "pygame\missiles\images\missile.png"
+                ).convert()
                 self.surf.set_colorkey((255, 255, 255), RLEACCEL)
                 self.rect = self.surf.get_rect(
                     center=(
@@ -162,16 +171,18 @@ class MissilesGame:
         class Cloud(pygame.sprite.Sprite):
             def __init__(self):
                 super(Cloud, self).__init__()
-                self.surf = pygame.image.load("pygame\missiles\images\cloud.png").convert()
+                self.surf = pygame.image.load(
+                    "pygame\missiles\images\cloud.png"
+                ).convert()
                 self.surf.set_colorkey((0, 0, 0), RLEACCEL)
                 self.speed = random.randint(-10, -3)
                 self.rect = self.surf.get_rect(
                     center=(
-                        screen_width+20,
+                        screen_width + 20,
                         random.randint(0, screen_height),
-
                     )
                 )
+
             # Move the cloud based on a constant speed
             # Remove the cloud when it passes the left edge of the screen
             def update(self):
@@ -265,18 +276,25 @@ class MissilesGame:
                 if game_over_time == None:
                     game_over_time = pygame.time.get_ticks()
 
-                if pygame.time.get_ticks() - game_over_time < 5000:  # Display game over message for 5 seconds
-                    game_over_text = font.render("GAME OVER", True, (220, 20, 60), (135, 206, 250))
+                if (
+                    pygame.time.get_ticks() - game_over_time < 5000
+                ):  # Display game over message for 5 seconds
+                    game_over_text = font.render(
+                        "GAME OVER", True, (220, 20, 60), (135, 206, 250)
+                    )
                     screen.blit(
                         game_over_text,
-                        (screen_width // 2 - game_over_text.get_width() // 2, screen_height // 2 - game_over_text.get_height() // 2)
+                        (
+                            screen_width // 2 - game_over_text.get_width() // 2,
+                            screen_height // 2 - game_over_text.get_height() // 2,
+                        ),
                     )
                 else:
                     high_scores = load_high_scores()
                     high_scores = update_high_scores(high_scores, score)
                     high_score_text = display_high_scores(high_scores)
                     got_high_scores = True
-            
+
             if lose and got_high_scores:
                 y = 150
                 for i, (name, score) in enumerate(high_scores):
@@ -292,7 +310,10 @@ class MissilesGame:
             score_text = score_font.render(f"{score}", True, (0, 0, 0), (135, 206, 250))
             screen.blit(
                 score_text,
-                (screen_width - score_text.get_width() * 2, score_text.get_height() // 2),
+                (
+                    screen_width - score_text.get_width() * 2,
+                    score_text.get_height() // 2,
+                ),
             )
 
             # Draw all sprites
@@ -311,6 +332,7 @@ class MissilesGame:
             # Ensure the program maintains a rate of 30 frames per second
             clock.tick(30)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     MissilesGame.run_game()
     pygame.quit()
