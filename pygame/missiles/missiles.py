@@ -3,6 +3,9 @@ import random
 import os
 import json
 
+IMAGES_FOLDER_FILEPATH = os.path.join("pygame", "missiles", "images")
+JSON_FILEPATH = os.path.join("pygame", "missiles", "missiles.json")
+
 
 class MissilesGame:
     def run_game():
@@ -31,14 +34,13 @@ class MissilesGame:
             return text
 
         def save_high_scores(high_scores):
-            with open(r"pygame\missiles\missiles.json", "w") as file:
+            with open(JSON_FILEPATH, "w") as file:
                 json.dump(high_scores, file)
 
         def load_high_scores():
-            file_path = r"pygame\missiles\missiles.json"
-            if os.path.isfile(file_path):
+            if os.path.isfile(JSON_FILEPATH):
                 try:
-                    with open(file_path, "r") as file:
+                    with open(JSON_FILEPATH, "r") as file:
                         return json.load(file)
                 except json.JSONDecodeError:
                     # Handle JSON decoding errors (e.g., invalid JSON data in the file)
@@ -55,7 +57,8 @@ class MissilesGame:
                     key=lambda x: x[1], reverse=True
                 )  # Sort by score in descending order
                 high_scores = high_scores[:10]  # Keep only the top 10 scores
-                save_high_scores(high_scores)  # Save the updated high scores to a file
+                # Save the updated high scores to a file
+                save_high_scores(high_scores)
             return high_scores
 
         def get_player_name():
@@ -89,7 +92,8 @@ class MissilesGame:
                                 text += event.unicode
 
                 screen.fill((30, 30, 30))
-                high_score_text = font.render(f"HIGH SCORE!", True, (255, 255, 255))
+                high_score_text = font.render(
+                    f"HIGH SCORE!", True, (255, 255, 255))
                 txt_surface = score_font.render(text, True, color)
                 enter_name_text = score_font.render(
                     f"Enter your name:", True, (255, 255, 255)
@@ -115,7 +119,7 @@ class MissilesGame:
             def __init__(self):
                 super(Player, self).__init__()
                 self.surf = pygame.image.load(
-                    "pygame\missiles\images\jet.png"
+                    os.path.join(IMAGES_FOLDER_FILEPATH, "jet.png")
                 ).convert()
                 self.surf.set_colorkey((255, 255, 255), RLEACCEL)
                 self.rect = self.surf.get_rect()
@@ -149,7 +153,7 @@ class MissilesGame:
             def __init__(self):
                 super(Enemy, self).__init__()
                 self.surf = pygame.image.load(
-                    "pygame\missiles\images\missile.png"
+                    os.path.join(IMAGES_FOLDER_FILEPATH, "missile.png")
                 ).convert()
                 self.surf.set_colorkey((255, 255, 255), RLEACCEL)
                 self.rect = self.surf.get_rect(
@@ -172,7 +176,7 @@ class MissilesGame:
             def __init__(self):
                 super(Cloud, self).__init__()
                 self.surf = pygame.image.load(
-                    "pygame\missiles\images\cloud.png"
+                    os.path.join(IMAGES_FOLDER_FILEPATH, "cloud.png")
                 ).convert()
                 self.surf.set_colorkey((0, 0, 0), RLEACCEL)
                 self.speed = random.randint(-10, -3)
@@ -299,15 +303,19 @@ class MissilesGame:
                 y = 150
                 for i, (name, score) in enumerate(high_scores):
                     text = f"{i + 1}. {name}: {score}"
-                    text = score_font.render(text, True, (0, 0, 0), (135, 206, 250))
+                    text = score_font.render(
+                        text, True, (0, 0, 0), (135, 206, 250))
                     screen.blit(text, (screen_width // 2 - 100, y))
                     y += text.get_height()
                 y += text.get_height()
                 text = "Press ESC to exit."
-                text = score_font.render(text, True, (0, 0, 0), (135, 206, 250))
-                screen.blit(text, (screen_width // 2 - text.get_width() // 2, y))
+                text = score_font.render(
+                    text, True, (0, 0, 0), (135, 206, 250))
+                screen.blit(text, (screen_width // 2 -
+                            text.get_width() // 2, y))
 
-            score_text = score_font.render(f"{score}", True, (0, 0, 0), (135, 206, 250))
+            score_text = score_font.render(
+                f"{score}", True, (0, 0, 0), (135, 206, 250))
             screen.blit(
                 score_text,
                 (

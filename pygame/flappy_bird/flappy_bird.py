@@ -4,6 +4,9 @@ import math
 import json
 import os
 
+IMAGES_FOLDER_FILEPATH = os.path.join("pygame", "flappy_bird", "images")
+JSON_FILEPATH = os.path.join("pygame", "flappy_bird", "flappy_bird.json")
+
 
 class FlappyBirdGame:
     def run_game():
@@ -40,14 +43,13 @@ class FlappyBirdGame:
             return text
 
         def save_high_scores(high_scores):
-            with open(r"pygame\flappy_bird\flappy_bird.json", "w") as file:
+            with open(JSON_FILEPATH, "w") as file:
                 json.dump(high_scores, file)
 
         def load_high_scores():
-            file_path = r"pygame\flappy_bird\flappy_bird.json"
-            if os.path.isfile(file_path):
+            if os.path.isfile(JSON_FILEPATH):
                 try:
-                    with open(file_path, "r") as file:
+                    with open(JSON_FILEPATH, "r") as file:
                         return json.load(file)
                 except json.JSONDecodeError:
                     # Handle JSON decoding errors (e.g., invalid JSON data in the file)
@@ -64,7 +66,8 @@ class FlappyBirdGame:
                     key=lambda x: x[1], reverse=True
                 )  # Sort by score in descending order
                 high_scores = high_scores[:10]  # Keep only the top 10 scores
-                save_high_scores(high_scores)  # Save the updated high scores to a file
+                # Save the updated high scores to a file
+                save_high_scores(high_scores)
             return high_scores
 
         def get_player_name():
@@ -124,7 +127,7 @@ class FlappyBirdGame:
             def __init__(self, GRAVITY):
                 super().__init__()
                 self.surf = pygame.image.load(
-                    r"pygame\flappy_bird\images\fishTile_100.png"
+                    os.path.join(IMAGES_FOLDER_FILEPATH, "fishTile_100.png")
                 ).convert()
                 self.surf.set_colorkey((0, 0, 0))
                 self.rect = self.surf.get_rect()
@@ -132,7 +135,8 @@ class FlappyBirdGame:
                 self.surf = pygame.transform.scale(self.surf, (40, 40))
                 self.velocity = pygame.math.Vector2(0, 0)
                 self.gravity = pygame.math.Vector2(0, GRAVITY)
-                self.jump_force = -10  # Initial jump force (negative for upward motion)
+                # Initial jump force (negative for upward motion)
+                self.jump_force = -10
                 self.jump_timer = 0  # Timer to control jump delay
                 self.jump = False
                 self.go = False
@@ -168,7 +172,7 @@ class FlappyBirdGame:
             def __init__(self):
                 super().__init__()
                 self.surf = pygame.image.load(
-                    r"pygame\flappy_bird\images\block_narrow.png"
+                    os.path.join(IMAGES_FOLDER_FILEPATH, "block_narrow.png")
                 ).convert()
                 self.surf.set_colorkey((0, 0, 0), RLEACCEL)
                 # self.surf = pygame.image.load(random.choice((r"pygame\flappy_bird\images\hill_large.png",
@@ -203,7 +207,7 @@ class FlappyBirdGame:
         pipes = pygame.sprite.Group()
 
         background = pygame.image.load(
-            r"pygame\flappy_bird\images\blue_grass.png"
+            os.path.join(IMAGES_FOLDER_FILEPATH, "blue_grass.png")
         ).convert()
         GRAVITY = 4
         clock = pygame.time.Clock()
@@ -291,13 +295,16 @@ class FlappyBirdGame:
                 y = 150
                 for i, (name, score) in enumerate(high_scores):
                     text = f"{i + 1}. {name}: {score}"
-                    text = small_font.render(text, True, (0, 0, 0), (208, 244, 247))
+                    text = small_font.render(
+                        text, True, (0, 0, 0), (208, 244, 247))
                     screen.blit(text, (screen_width // 2 - 100, y))
                     y += text.get_height()
                 y += text.get_height()
                 text = "Press ESC to exit."
-                text = small_font.render(text, True, (0, 0, 0), (208, 244, 247))
-                screen.blit(text, (screen_width // 2 - text.get_width() // 2, y))
+                text = small_font.render(
+                    text, True, (0, 0, 0), (208, 244, 247))
+                screen.blit(text, (screen_width // 2 -
+                            text.get_width() // 2, y))
 
             player.update()
 
@@ -328,7 +335,8 @@ class FlappyBirdGame:
                         player.jump_force = 0
                         player.gravity = pygame.math.Vector2(0, 0)
 
-            score_text = small_font.render(f"{score}", True, (0, 0, 0), (208, 244, 247))
+            score_text = small_font.render(
+                f"{score}", True, (0, 0, 0), (208, 244, 247))
             screen.blit(
                 score_text,
                 (

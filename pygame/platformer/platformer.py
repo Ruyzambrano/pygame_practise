@@ -4,6 +4,10 @@ import math
 import json
 import os
 
+IMAGES_FOLDER_FILEPATH = os.path.join("pygame", "platformer", "images")
+JSON_FILEPATH = os.path.join("pygame", "platformer", "platformer.json")
+
+
 class PlatformerGame:
     def run_game():
 
@@ -31,16 +35,14 @@ class PlatformerGame:
             text = large_font.render(text, True, (255, 255, 255))
             return text
 
-
         def save_high_scores(high_scores):
-            with open(r"pygame\platformer\platformer.json", "w") as file:
+            with open(JSON_FILEPATH, "w") as file:
                 json.dump(high_scores, file)
 
         def load_high_scores():
-            file_path = r"pygame\platformer\platformer.json"
-            if os.path.isfile(file_path):
+            if os.path.isfile(JSON_FILEPATH):
                 try:
-                    with open(file_path, "r") as file:
+                    with open(JSON_FILEPATH, "r") as file:
                         return json.load(file)
                 except json.JSONDecodeError:
                     # Handle JSON decoding errors (e.g., invalid JSON data in the file)
@@ -53,9 +55,11 @@ class PlatformerGame:
             if len(high_scores) < 10 or player_score > high_scores[-1][1]:
                 player_name = get_player_name()
                 high_scores.append((player_name, player_score))
-                high_scores.sort(key=lambda x: x[1], reverse=True)  # Sort by score in descending order
+                # Sort by score in descending order
+                high_scores.sort(key=lambda x: x[1], reverse=True)
                 high_scores = high_scores[:10]  # Keep only the top 10 scores
-                save_high_scores(high_scores)  # Save the updated high scores to a file
+                # Save the updated high scores to a file
+                save_high_scores(high_scores)
             return high_scores
 
         def get_player_name():
@@ -89,19 +93,21 @@ class PlatformerGame:
                                 text += event.unicode
 
                 screen.fill((30, 30, 30))
-                high_score_text = large_font.render(f"HIGH SCORE!", True, (255, 255, 255))
+                high_score_text = large_font.render(
+                    f"HIGH SCORE!", True, (255, 255, 255))
                 txt_surface = small_font.render(text, True, color)
-                enter_name_text = small_font.render(f"Enter your name:", True, (255, 255, 255))
+                enter_name_text = small_font.render(
+                    f"Enter your name:", True, (255, 255, 255))
                 width = max(200, txt_surface.get_width() + 10)
                 input_box.w = width
                 screen.blit(
-                        high_score_text,
-                        (screen_width // 2 - high_score_text.get_width() // 2, 160),
-                    )
+                    high_score_text,
+                    (screen_width // 2 - high_score_text.get_width() // 2, 160),
+                )
                 screen.blit(
-                        enter_name_text,
-                        (screen_width // 2 - enter_name_text.get_width() // 2, 240),
-                    )
+                    enter_name_text,
+                    (screen_width // 2 - enter_name_text.get_width() // 2, 240),
+                )
                 screen.blit(txt_surface, (input_box.x + 5, input_box.y + 5))
                 pygame.draw.rect(screen, color, input_box, 2)
                 pygame.display.flip()
@@ -111,7 +117,7 @@ class PlatformerGame:
             def __init__(self):
                 super(Player, self).__init__()
                 self.surf = pygame.image.load(
-                    r"pygame\platformer\images\playerRed_up1.png"
+                    os.path.join(IMAGES_FOLDER_FILEPATH, "playerRed_up1.png")
                 ).convert()
                 self.surf.set_colorkey((0, 0, 0), RLEACCEL)
                 self.rect = self.surf.get_rect()
@@ -134,15 +140,15 @@ class PlatformerGame:
                 if keys[K_SPACE] and self.jump_limit > self.jump_count:
                     if (pygame.time.get_ticks() - self.last_jump) > 200:
                         self.jumping = True  # Start the jump
-                        self.jump_velocity = self.base_jump_velocity 
+                        self.jump_velocity = self.base_jump_velocity
                         self.jump_count += 1
-                        jump_counter +=1
+                        jump_counter += 1
                         self.last_jump = pygame.time.get_ticks()
-                
+
                 # Handle the player going offscreen
                 if player.rect.x < 0:
                     player.rect.x = screen_width
-                
+
                 if player.rect.x > screen_width:
                     player.rect.x = 0
 
@@ -169,20 +175,22 @@ class PlatformerGame:
 
                 return jump_counter
 
-
         class Platform(pygame.sprite.Sprite):
             def __init__(self, x, y, width, speed):
                 super(Platform, self).__init__()
-                self.surf = pygame.image.load(random.choice((r"pygame\platformer\images\tileBlue_07.png",
-                                                            r"pygame\platformer\images\tileBrown_08.png",
-                                                            r"pygame\platformer\images\tileGreen_07.png",
-                                                            r"pygame\platformer\images\tileYellow_08.png")))
-                self.surf = pygame.transform.scale(self.surf, (width, 30))  # Resize the image
+                self.surf = pygame.image.load(random.choice((os.path.join(IMAGES_FOLDER_FILEPATH, "tileBlue_07.png"),
+                                                            os.path.join(
+                                                                IMAGES_FOLDER_FILEPATH, "tileBrown_08.png"),
+                                                             os.path.join(
+                                                                 IMAGES_FOLDER_FILEPATH, "tileGreen_07.png"),
+                                                             os.path.join(IMAGES_FOLDER_FILEPATH, "tileYellow_08.png"))))
+                self.surf = pygame.transform.scale(
+                    self.surf, (width, 30))  # Resize the image
                 self.rect = self.surf.get_rect()
                 self.rect.x = x
                 self.rect.y = y
                 self.velocity = pygame.math.Vector2(0, speed)
-            
+
             def update(self):
                 self.rect.move_ip(self.velocity)
 
@@ -201,15 +209,16 @@ class PlatformerGame:
         class Cloud(pygame.sprite.Sprite):
             def __init__(self):
                 super(Cloud, self).__init__()
-                self.surf = pygame.image.load(random.choice((r"pygame\platformer\images\cloud1.png",
-                                              r"pygame\platformer\images\cloud2.png",
-                                              r"pygame\platformer\images\cloud3.png",
-                                              r"pygame\platformer\images\cloud4.png",
-                                              r"pygame\platformer\images\cloud5.png",
-                                              r"pygame\platformer\images\cloud6.png",
-                                              r"pygame\platformer\images\cloud7.png",
-                                              r"pygame\platformer\images\cloud8.png",
-                                              r"pygame\platformer\images\cloud9.png"))
+                self.surf = pygame.image.load(random.choice((os.path.join(IMAGES_FOLDER_FILEPATH, "cloud1.png"),
+                                              os.path.join(
+                                                  IMAGES_FOLDER_FILEPATH, "cloud2.png"),
+                    os.path.join(IMAGES_FOLDER_FILEPATH, "cloud3.png"),
+                    os.path.join(IMAGES_FOLDER_FILEPATH, "cloud4.png"),
+                    os.path.join(IMAGES_FOLDER_FILEPATH, "cloud5.png"),
+                    os.path.join(IMAGES_FOLDER_FILEPATH, "cloud6.png"),
+                    os.path.join(IMAGES_FOLDER_FILEPATH, "cloud7.png"),
+                    os.path.join(IMAGES_FOLDER_FILEPATH, "cloud8.png"),
+                    os.path.join(IMAGES_FOLDER_FILEPATH, "cloud9.png")))
                 )
                 self.rect = self.surf.get_rect()
                 self.rect.x = random.randint(0, screen_width)
@@ -228,21 +237,22 @@ class PlatformerGame:
                 self.rect = self.surf.get_rect()
                 self.rect.x = random.randint(0, screen_width)
                 self.rect.y = -10
-            
+
             def update(self):
                 self.rect.move_ip(0, 1)
-    
+
         class LowGravity(PowerUp):
             def __init__(self):
-                super().__init__("low_gravity", r"pygame\platformer\images\blueCrystal.png")
-        
+                super().__init__("low_gravity", os.path.join(
+                    IMAGES_FOLDER_FILEPATH, "blueCrystal.png"))
+
         class DoubleJump(PowerUp):
             def __init__(self):
-                super().__init__("double", r"pygame\platformer\images\discRed.png")
-        
+                super().__init__("double", os.path.join(IMAGES_FOLDER_FILEPATH, "discRed.png"))
+
         class HighJump(PowerUp):
             def __init__(self):
-                super().__init__("high", r"pygame\platformer\images\yellowGem.png")
+                super().__init__("high", os.path.join(IMAGES_FOLDER_FILEPATH, "yellowGem.png"))
 
         clock = pygame.time.Clock()
         running = True
@@ -262,26 +272,26 @@ class PlatformerGame:
         all_sprites.add(platform)
 
         platform = Platform(random.randint(0, screen_width - 100),
-                                            300,
-                                            random.randint(100, 300),
-                                            level.speed)
+                            300,
+                            random.randint(100, 300),
+                            level.speed)
         platforms.add(platform)
         all_sprites.add(platform)
 
         platform = Platform(random.randint(0, screen_width - 100),
-                                            100,
-                                            random.randint(10, 300),
-                                            level.speed)
+                            100,
+                            random.randint(10, 300),
+                            level.speed)
         platforms.add(platform)
         all_sprites.add(platform)
 
         platform = Platform(random.randint(0, screen_width - 100),
-                                            0,
-                                            random.randint(100, 300),
-                                            level.speed)
+                            0,
+                            random.randint(100, 300),
+                            level.speed)
         platforms.add(platform)
         all_sprites.add(platform)
-        
+
         ADD_CLOUD = pygame.USEREVENT + 1
         pygame.time.set_timer(ADD_CLOUD, random.randint(500, 1500))
 
@@ -293,7 +303,7 @@ class PlatformerGame:
 
         ADD_LOW_GRAVITY = pygame.USEREVENT + 4
         pygame.time.set_timer(ADD_LOW_GRAVITY, random.randint(30000, 45000))
-                              
+
         lose = False
         game_over_time = None
         score = 0
@@ -351,29 +361,33 @@ class PlatformerGame:
                     game_over_time = pygame.time.get_ticks()
 
                 if pygame.time.get_ticks() - game_over_time < 5000:  # Display game over message for 5 seconds
-                    game_over_text = large_font.render("GAME OVER", True, (220, 20, 60), (204, 255, 255))
+                    game_over_text = large_font.render(
+                        "GAME OVER", True, (220, 20, 60), (204, 255, 255))
                     screen.blit(
                         game_over_text,
-                        (screen_width // 2 - game_over_text.get_width() // 2, screen_height // 2 - game_over_text.get_height() // 2)
+                        (screen_width // 2 - game_over_text.get_width() // 2,
+                         screen_height // 2 - game_over_text.get_height() // 2)
                     )
                 else:
                     high_scores = load_high_scores()
                     high_scores = update_high_scores(high_scores, score)
                     high_score_text = display_high_scores(high_scores)
                     got_high_scores = True
-            
+
             if lose and got_high_scores:
                 y = 150
                 for i, (name, score) in enumerate(high_scores):
                     text = f"{i + 1}. {name}: {score}"
-                    text = small_font.render(text, True, (0, 0, 0), (204, 255, 255))
+                    text = small_font.render(
+                        text, True, (0, 0, 0), (204, 255, 255))
                     screen.blit(text, (screen_width // 2 - 100, y))
                     y += text.get_height()
                 y += text.get_height()
                 text = "Press ESC to exit."
-                text = small_font.render(text, True, (0, 0, 0), (204, 255, 255))
-                screen.blit(text, (screen_width // 2 - text.get_width() // 2, y))
-
+                text = small_font.render(
+                    text, True, (0, 0, 0), (204, 255, 255))
+                screen.blit(text, (screen_width // 2 -
+                            text.get_width() // 2, y))
 
             if not lose:
                 jump_counter = player.update(on_surface, jump_counter)
@@ -387,7 +401,8 @@ class PlatformerGame:
                 if pygame.sprite.spritecollideany(player, platforms) and player.velocity.y > 0:
                     for platform in platforms:
                         if pygame.sprite.collide_rect(player, platform):
-                            player.rect.y = (platform.rect.y - player.rect.height)
+                            player.rect.y = (
+                                platform.rect.y - player.rect.height)
                             on_surface = True
                             player.jump_count = 0
 
@@ -436,10 +451,12 @@ class PlatformerGame:
             for cloud in clouds:
                 cloud.update()
 
-            score_text = small_font.render(f"{score}", True, (0, 0, 0), (204, 255, 255))
+            score_text = small_font.render(
+                f"{score}", True, (0, 0, 0), (204, 255, 255))
             screen.blit(
                 score_text,
-                (screen_width - score_text.get_width() * 2, score_text.get_height() // 2),
+                (screen_width - score_text.get_width()
+                 * 2, score_text.get_height() // 2),
             )
 
             if high_active is True and (current_time - high_timer) > 30000:
@@ -453,7 +470,7 @@ class PlatformerGame:
             if low_gravity_active is True and (current_time - low_gravity_timer) > 30000:
                 GRAVITY = 4
                 low_gravity_active = False
-    
+
             # Draw all sprites
             for sprite in all_sprites:
                 screen.blit(sprite.surf, sprite.rect)
@@ -461,6 +478,7 @@ class PlatformerGame:
             pygame.display.flip()
 
             clock.tick(60)
+
 
 if __name__ == '__main__':
     PlatformerGame.run_game()

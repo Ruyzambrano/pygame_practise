@@ -4,6 +4,10 @@ import math
 import json
 import os
 
+IMAGES_FOLDER_FILEPATH = os.path.join("pygame", "space_invaders", "images")
+JSON_FILEPATH = os.path.join("pygame", "space_invaders", "space_invaders.json")
+
+
 class SpaceInvadersGame:
     def run_game():
 
@@ -28,16 +32,14 @@ class SpaceInvadersGame:
             text = font.render(text, True, (255, 255, 255))
             return text
 
-
         def save_high_scores(high_scores):
-            with open(r"pygame\space_invaders\space_invaders.json", "w") as file:
+            with open("space_invaders.json", "w") as file:
                 json.dump(high_scores, file)
 
         def load_high_scores():
-            file_path = r"pygame\space_invaders\space_invaders.json"
-            if os.path.isfile(file_path):
+            if os.path.isfile(JSON_FILEPATH):
                 try:
-                    with open(file_path, "r") as file:
+                    with open(JSON_FILEPATH, "r") as file:
                         return json.load(file)
                 except json.JSONDecodeError:
                     # Handle JSON decoding errors (e.g., invalid JSON data in the file)
@@ -50,9 +52,11 @@ class SpaceInvadersGame:
             if len(high_scores) < 10 or player_score > high_scores[-1][1]:
                 player_name = get_player_name()
                 high_scores.append((player_name, player_score))
-                high_scores.sort(key=lambda x: x[1], reverse=True)  # Sort by score in descending order
+                # Sort by score in descending order
+                high_scores.sort(key=lambda x: x[1], reverse=True)
                 high_scores = high_scores[:10]  # Keep only the top 10 scores
-                save_high_scores(high_scores)  # Save the updated high scores to a file
+                # Save the updated high scores to a file
+                save_high_scores(high_scores)
             return high_scores
 
         def get_player_name():
@@ -86,31 +90,33 @@ class SpaceInvadersGame:
                                 text += event.unicode
 
                 screen.fill((30, 30, 30))
-                high_score_text = font.render(f"HIGH SCORE!", True, (255, 255, 255))
+                high_score_text = font.render(
+                    f"HIGH SCORE!", True, (255, 255, 255))
                 txt_surface = score_font.render(text, True, color)
-                enter_name_text = score_font.render(f"Enter your name:", True, (255, 255, 255))
+                enter_name_text = score_font.render(
+                    f"Enter your name:", True, (255, 255, 255))
                 width = max(200, txt_surface.get_width() + 10)
                 input_box.w = width
                 screen.blit(
-                        high_score_text,
-                        (screen_width // 2 - high_score_text.get_width() // 2, 160),
-                    )
+                    high_score_text,
+                    (screen_width // 2 - high_score_text.get_width() // 2, 160),
+                )
                 screen.blit(
-                        enter_name_text,
-                        (screen_width // 2 - enter_name_text.get_width() // 2, 240),
-                    )
+                    enter_name_text,
+                    (screen_width // 2 - enter_name_text.get_width() // 2, 240),
+                )
                 screen.blit(txt_surface, (input_box.x + 5, input_box.y + 5))
                 pygame.draw.rect(screen, color, input_box, 2)
                 pygame.display.flip()
                 clock.tick(30)
 
-
         # Define the player
+
         class Player(pygame.sprite.Sprite):
             def __init__(self):
                 super(Player, self).__init__()
                 self.surf = pygame.image.load(
-                    "pygame\space_invaders\images\player.png"
+                    os.path.join(IMAGES_FOLDER_FILEPATH, "player.png")
                 ).convert()
                 self.surf.set_colorkey((255, 255, 255), RLEACCEL)
                 self.rect = self.surf.get_rect()
@@ -144,13 +150,13 @@ class SpaceInvadersGame:
                         width,
                         height,
                         -1,
-                        "pygame\space_invaders\images\laserBlue04.png",
+                        os.path.join(IMAGES_FOLDER_FILEPATH,
+                                     "laserBlue04.png"),
                         self.strength,
                     )
                     player_bullets.add(new_bullet)
                     all_sprites.add(new_bullet)
                     self.last_shot_time = current_time
-
 
         class Bullet(pygame.sprite.Sprite):
             def __init__(self, width, height, up_down, image_path, strength):
@@ -160,7 +166,8 @@ class SpaceInvadersGame:
                 self.rect = self.surf.get_rect(center=((width + 30), height))
                 self.direction = up_down
                 self.surf = pygame.transform.scale(
-                    self.surf, (int(self.rect.width * 0.5), int(self.rect.height * 0.5))
+                    self.surf, (int(self.rect.width * 0.5),
+                                int(self.rect.height * 0.5))
                 )
                 self.strength = strength
                 self.mask = pygame.mask.from_surface(self.surf)
@@ -169,7 +176,6 @@ class SpaceInvadersGame:
                 self.rect.move_ip(0, 10 * self.direction)
                 if self.rect.top == 0:
                     self.kill()
-
 
         class Enemy(pygame.sprite.Sprite):
             def __init__(self, image_path, enemy_colour):
@@ -200,32 +206,28 @@ class SpaceInvadersGame:
                 height = self.rect.y + 5
                 width = self.rect.x - 13
                 new_bullet = Bullet(
-                    width, height, 1, r"pygame\space_invaders\images\laserRed04.png", strength=1
+                    width, height, 1, os.path.join(IMAGES_FOLDER_FILEPATH, "laserRed04.png"), strength=1
                 )
                 enemy_bullets.add(new_bullet)
                 all_sprites.add(new_bullet)
 
-
         class RedAlien(Enemy):
             def __init__(self, colour):
-                super().__init__(r"pygame\space_invaders\images\red.png", colour)
+                super().__init__(os.path.join(IMAGES_FOLDER_FILEPATH, "red.png"), colour)
                 self.health = 1
                 self.worth = 1
 
-
         class GreenAlien(Enemy):
             def __init__(self, colour):
-                super().__init__(r"pygame\space_invaders\images\green.png", colour)
+                super().__init__(os.path.join(IMAGES_FOLDER_FILEPATH, "green.png"), colour)
                 self.health = 4
                 self.worth = 2
 
-
         class YellowAlien(Enemy):
             def __init__(self, colour):
-                super().__init__(r"pygame\space_invaders\images\yellow.png", colour)
+                super().__init__(os.path.join(IMAGES_FOLDER_FILEPATH, "yellow.png"), colour)
                 self.health = 6
                 self.worth = 4
-
 
         class Level:
             def __init__(self):
@@ -243,12 +245,11 @@ class SpaceInvadersGame:
                 if level.round == 3:
                     self.enemy_pool.append("yellow")
 
-
         class Shield(pygame.sprite.Sprite):
             def __init__(self):
                 super(Shield, self).__init__()
                 self.surf = pygame.image.load(
-                    "pygame\space_invaders\images\extra.png"
+                    os.path.join(IMAGES_FOLDER_FILEPATH, "extra.png")
                 ).convert()
                 self.surf.set_colorkey((255, 255, 255), RLEACCEL)
                 self.rect = self.surf.get_rect()
@@ -263,7 +264,8 @@ class SpaceInvadersGame:
                 self.surf = pygame.image.load(image_path).convert()
                 self.rect = self.surf.get_rect(center=(width, height))
                 self.surf = pygame.transform.scale(
-                    self.surf, (int(self.rect.width * 0.5), int(self.rect.height * 0.5))
+                    self.surf, (int(self.rect.width * 0.5),
+                                int(self.rect.height * 0.5))
                 )
 
             def update(self):
@@ -274,12 +276,12 @@ class SpaceInvadersGame:
                 if self.rect.top < 0:
                     self.kill()
 
-
         class FirePowerUp(PowerUp):
             def __init__(self, width, height):
                 super().__init__(
                     "strength_up",
-                    r"pygame\space_invaders\images\powerupRed_star.png",
+                    os.path.join(IMAGES_FOLDER_FILEPATH,
+                                 "powerupRed_star.png"),
                     width,
                     height,
                 )
@@ -288,7 +290,8 @@ class SpaceInvadersGame:
             def __init__(self, width, height):
                 super().__init__(
                     "speed_up",
-                    r"pygame\space_invaders\images\powerupGreen_bolt.png",
+                    os.path.join(IMAGES_FOLDER_FILEPATH,
+                                 "powerupGreen_bolt.png"),
                     width,
                     height,
                 )
@@ -297,7 +300,8 @@ class SpaceInvadersGame:
             def __init__(self, width, height):
                 super().__init__(
                     "extra_shield",
-                    r"pygame\space_invaders\images\powerupBlue_shield.png",
+                    os.path.join(IMAGES_FOLDER_FILEPATH,
+                                 "powerupBlue_shield.png"),
                     width,
                     height,
                 )
@@ -306,12 +310,13 @@ class SpaceInvadersGame:
             def __init__(self, player):
                 super().__init__()
                 self.surf = pygame.image.load(
-                    r"pygame\space_invaders\images\shield3.png"
+                    os.path.join(IMAGES_FOLDER_FILEPATH, "shield3.png")
                 ).convert()
                 self.surf.set_colorkey((255, 255, 255), RLEACCEL)
                 self.surf = pygame.transform.scale(
                     self.surf,
-                    (int(self.surf.get_width() * 0.5), int(self.surf.get_height() * 0.5)),
+                    (int(self.surf.get_width() * 0.5),
+                     int(self.surf.get_height() * 0.5)),
                 )
                 self.rect = self.surf.get_rect()
                 self.rect.centerx = player.rect.centerx
@@ -322,7 +327,6 @@ class SpaceInvadersGame:
             def update(self, player):
                 self.rect.centerx = player.rect.centerx
                 self.rect.centery = player.rect.centery
-
 
         # Create the player
         player = Player()
@@ -403,7 +407,8 @@ class SpaceInvadersGame:
 
                 if event.type == ENEMYSHOT:
                     if not lose:
-                        enemies.sprites()[random.randint(0, len(enemies) - 1)].shoot()
+                        enemies.sprites()[random.randint(
+                            0, len(enemies) - 1)].shoot()
 
                 # Check for QUIT event. If QUIT, then set running to false.
                 elif event.type == QUIT:
@@ -490,19 +495,22 @@ class SpaceInvadersGame:
                                 elif enemy.type == "yellow":
                                     yellow_kills += 1
                                 if red_kills > 4 and rng < 5:
-                                    new_power_up = FireSpeedUp(enemy.rect.x, enemy.rect.y)
+                                    new_power_up = FireSpeedUp(
+                                        enemy.rect.x, enemy.rect.y)
                                     powerups.add(new_power_up)
                                     all_sprites.add(new_power_up)
                                     red_kills = 0
                                     odds = 20
                                 elif green_kills > 4 and rng < 4:
-                                    new_power_up = FirePowerUp(enemy.rect.x, enemy.rect.y)
+                                    new_power_up = FirePowerUp(
+                                        enemy.rect.x, enemy.rect.y)
                                     powerups.add(new_power_up)
                                     all_sprites.add(new_power_up)
                                     green_kills = 0
                                     odds = 20
                                 elif yellow_kills > 4 and rng < 3:
-                                    new_power_up = ExtraShield(enemy.rect.x, enemy.rect.y)
+                                    new_power_up = ExtraShield(
+                                        enemy.rect.x, enemy.rect.y)
                                     powerups.add(new_power_up)
                                     all_sprites.add(new_power_up)
                                     yellow_kills = 0
@@ -549,7 +557,8 @@ class SpaceInvadersGame:
                             height -= 50
                             enemies_to_place -= 10
                         if enemies_to_place > 0:
-                            divide = round((screen_width - 150) / enemies_to_place)
+                            divide = round(
+                                (screen_width - 150) / enemies_to_place)
                             width = divide
                             while enemies_to_place > 0:
                                 enemies_to_place -= 1
@@ -577,7 +586,8 @@ class SpaceInvadersGame:
                     game_over_time = pygame.time.get_ticks()
 
                 if pygame.time.get_ticks() - game_over_time < 5000:
-                    game_over_text = font.render(f"GAME OVER", True, (220, 20, 60), (0, 0, 0))
+                    game_over_text = font.render(
+                        f"GAME OVER", True, (220, 20, 60), (0, 0, 0))
                     screen.blit(
                         game_over_text,
                         (screen_width // 2 - game_over_text.get_width() // 2, 150),
@@ -587,7 +597,7 @@ class SpaceInvadersGame:
                     high_scores = update_high_scores(high_scores, score)
                     high_score_text = display_high_scores(high_scores)
                     got_high_scores = True
-            
+
             if lose and got_high_scores:
                 y = 150
                 for i, (name, score) in enumerate(high_scores):
@@ -598,17 +608,22 @@ class SpaceInvadersGame:
                 y += text.get_height()
                 text = "Press ESC to exit."
                 text = score_font.render(text, True, (255, 255, 255))
-                screen.blit(text, (screen_width // 2 - text.get_width() // 2, y))
+                screen.blit(text, (screen_width // 2 -
+                            text.get_width() // 2, y))
 
             if (pygame.time.get_ticks() - time_since_start) < 5000:
                 level_round = level.round
-                level_text = font.render(f"LEVEL {level_round}", True, (255, 255, 255))
-                screen.blit(level_text, (screen_width // 2 - level_text.get_width() // 2, 200))
+                level_text = font.render(
+                    f"LEVEL {level_round}", True, (255, 255, 255))
+                screen.blit(level_text, (screen_width // 2 -
+                            level_text.get_width() // 2, 200))
 
-            score_text = score_font.render(f"{score}", True, (225, 225, 225), (0, 0, 0))
+            score_text = score_font.render(
+                f"{score}", True, (225, 225, 225), (0, 0, 0))
             screen.blit(
                 score_text,
-                (screen_width - score_text.get_width() * 2, score_text.get_height() // 2),
+                (screen_width - score_text.get_width()
+                 * 2, score_text.get_height() // 2),
             )
 
             # Draw all sprites
@@ -619,6 +634,7 @@ class SpaceInvadersGame:
             pygame.display.flip()
 
             clock.tick(40)
+
 
 if __name__ == '__main__':
     SpaceInvadersGame.run_game()
